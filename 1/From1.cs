@@ -11,7 +11,7 @@ namespace WinFromApp3
     {
         FlowLayoutPanel flow;
         TextBox txtSearch;
-        Button btnAdd, btnDel, btnRefresh;
+        Button btnAdd, btnDel, btnEdit, btnRefresh; 
         string conn = "Host=localhost;Database=WordToys;Username=postgres;Password=";
         string imagePath = @"C:\ProductImages\";
 
@@ -30,6 +30,20 @@ namespace WinFromApp3
 
             btnDel = new Button() { Text = "Удалить", Location = new Point(330, 10), Size = new Size(100, 30), BackColor = Color.FromArgb(222, 184, 135) };
             btnDel.Click += BtnDel_Click;
+            btnEdit = new Button() { Text = "Изменить", Location = new Point(330, 10), Size = new Size(100, 30), BackColor = Color.FromArgb(222, 184, 135) };
+            btnEdit.Click += (s, e) =>
+            {
+                if (selected == null)
+                {
+                    MessageBox.Show("Сначала выберите товар");
+                    return;
+                }
+                string artikel = selected.Tag.ToString();
+                new EditForm(conn, artikel).ShowDialog();
+                LoadProducts();
+            };
+
+            Controls.Add(btnEdit);
 
             btnRefresh = new Button() { Text = "Обновить", Location = new Point(440, 10), Size = new Size(100, 30), BackColor = Color.FromArgb(222, 184, 135) };
             btnRefresh.Click += (s, e) => LoadProducts();
@@ -114,7 +128,7 @@ namespace WinFromApp3
                         decimal price = Convert.ToDecimal(r["prise"]);
                         decimal finalPrice = price * (1 - sale / 100m);
                         string priceText = finalPrice.ToString("F2") + " руб.";
-                        if (sale > 0) priceText = price.ToString("F2") + " руб. → " + finalPrice.ToString("F2") + " руб.";
+                        if (sale > 0) priceText = finalPrice.ToString("F2") + " руб.";
                         Label lblPrice = new Label() { Text = "Цена: " + priceText, Font = new Font("Arial", 9), Location = new Point(x, y), Size = new Size(500, 20) };
                         card.Controls.Add(lblPrice);
                         y += 22;
